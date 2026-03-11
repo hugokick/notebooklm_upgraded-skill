@@ -1,0 +1,78 @@
+{
+  "notebooks": {
+    "notebook-1-(bcf73e)": {
+      "id": "notebook-1-(bcf73e)",
+      "url": "https://notebooklm.google.com/notebook/bcf73eee-8d13-4c2f-a894-12b8e21989c4",
+      "name": "Notebook 1 (bcf73e)",
+      "description": "Notebook content retrieved successfully",
+      "topics": [
+        "ai",
+        "research",
+        "documents"
+      ],
+      "content_types": [],
+      "use_cases": [],
+      "tags": [],
+      "created_at": "2026-03-12T00:11:00.075282",
+      "updated_at": "2026-03-12T00:11:00.075282",
+      "use_count": 0,
+      "last_used": null
+    },
+    "notebook-2-(ac1f7d)": {
+      "id": "notebook-2-(ac1f7d)",
+      "url": "https://notebooklm.google.com/notebook/ac1f7d7a-9b91-4e1b-855c-c3693dab2e11",
+      "name": "Notebook 2 (ac1f7d)",
+      "description": "Notebook content retrieved successfully",
+      "topics": [
+        "ai",
+        "research",
+        "documents"
+      ],
+      "content_types": [],
+      "use_cases": [],
+      "tags": [],
+      "created_at": "2026-03-12T00:12:14.788972",
+      "updated_at": "2026-03-12T00:12:14.788972",
+      "use_count": 0,
+      "last_used": null
+    },
+    "notebook-3-(4f627d)": {
+      "id": "notebook-3-(4f627d)",
+      "url": "https://notebooklm.google.com/notebook/4f627d7c-396c-4a5d-9ed4-264260cf19d0",
+      "name": "Notebook 3 (4f627d)",
+      "description": "Notebook content retrieved successfully",
+      "topics": [
+        "ai",
+        "research",
+        "documents"
+      ],
+      "content_types": [],
+      "use_cases": [],
+      "tags": [],
+      "created_at": "2026-03-12T00:13:25.944169",
+      "updated_at": "2026-03-12T00:13:25.944169",
+      "use_count": 0,
+      "last_used": null
+    },
+    "notebook-4-(b88d32)": {
+      "id": "notebook-4-(b88d32)",
+      "url": "https://notebooklm.google.com/notebook/b88d32e1-cdba-455c-a791-dee90052e8ae",
+      "name": "Notebook 4 (b88d32)",
+      "description": "Notebook content retrieved successfully",
+      "topics": [
+        "ai",
+        "research",
+        "documents"
+      ],
+      "content_types": [],
+      "use_cases": [],
+      "tags": [],
+      "created_at": "2026-03-12T00:14:25.949858",
+      "updated_at": "2026-03-12T00:14:25.949858",
+      "use_count": 0,
+      "last_used": null
+    }
+  },
+  "active_notebook_id": "notebook-1-(bcf73e)",
+  "updated_at": "2026-03-12T00:14:25.949858"
+}

@@ -1,0 +1,18 @@
+# Dependencies
+.venv/
+__pycache__/
+*.pyc
+
+# Browser state (contains auth cookies - DO NOT share!)
+data/browser_state/
+data/auth_info.json
+
+# Debug/temp files
+*.png
+*.html
+elements.txt
+auto_add_log.txt
+
+# OS
+.DS_Store
+Thumbs.db
