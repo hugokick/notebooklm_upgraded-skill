@@ -257,29 +257,48 @@ def upload_source(notebook_url: str, file_paths: list = None, youtube_url: str =
                 # Verify processing for this specific file
                 print(f"  Verifying upload of {filename} (waiting for indexing to complete)...")
                 try:
-                    # 1. Wait for the filename to appear
+                    # 1. Wait for the filename to appear in the list
                     page.wait_for_selector(f"text='{filename}'", timeout=90000)
-                    print(f"  {filename} is visible in the list")
+                    print(f"  {filename} is now visible in the list")
                     
-                    # 2. Wait for the 'Syncing' spinner to disappear
-                    # In NotebookLM, syncing indicates server-side processing.
-                    # We wait until the selector that matches the syncing icon is gone for this specific row.
-                    # Or just wait globally for no syncing indicators in the main panel.
-                    sync_selector = "[aria-label='Source is syncing']"
-                    print("  Waiting for 'Syncing' spinners to clear (this is critical for recognition)...")
-                    try:
-                        # Wait for at least one to be hidden or non-existent
-                        page.wait_for_selector(sync_selector, state="hidden", timeout=180000)
-                        print("  Syncing indicators cleared!")
-                    except:
-                        print("  Warning: Syncing is taking longer than 180s. Continuing anyway...")
+                    # 2. Precise indexing detection for this specific file
+                    # We look for the row containing this filename and check for syncing indicators within it
+                    source_row = page.locator("div[role='listitem']", has=page.locator(f"text='{filename}'")).first
                     
-                    # 3. Final verification: Check for the checkbox (indicates 'Ready')
-                    ready_indicator = page.locator("div[role='checkbox']").last
-                    if ready_indicator.is_visible():
-                         print(f"  {filename} appears Ready (Checkbox visible)")
+                    sync_selector = "[aria-label='Source is syncing'], .loading-spinner, [role='progressbar']"
                     
-                    time.sleep(5) # Final safety buffer
+                    print(f"  Monitoring indexing status for {filename}...")
+                    
+                    # Max wait 10 minutes for very large files or image-heavy PDFs
+                    start_time = time.time()
+                    timeout_limit = 600 # 10 minutes
+                    
+                    while time.time() - start_time < timeout_limit:
+                        # Check if any syncing indicator exists within this specific row
+                        is_syncing = source_row.locator(sync_selector).count() > 0
+                        
+                        if not is_syncing:
+                            # DOUBLE CONFIRMATION: Wait a few seconds and check again
+                            # Large image PDFs sometimes pause syncing between pages
+                            time.sleep(5)
+                            if source_row.locator(sync_selector).count() == 0:
+                                print(f"  Indexing confirmed complete for {filename}!")
+                                break
+                            else:
+                                print(f"  {filename} resumed syncing, continuing to wait...")
+                        
+                        # Progress update
+                        elapsed = int(time.time() - start_time)
+                        if elapsed % 30 == 0:
+                            print(f"  ...still indexing {filename} ({elapsed}s elapsed)")
+                        
+                        time.sleep(3)
+                    else:
+                        print(f"  Warning: Indexing for {filename} timed out after {timeout_limit}s. Continuing...")
+                    
+                    # 3. Final verification: Check for 'Ready' indicator (usually a checkbox or similar)
+                    if source_row.locator("div[role='checkbox']").is_visible():
+                         print(f"  {filename} state: READY")
                     
                 except Exception as e:
                     print(f"  Verification warning for {filename}: {e}")
