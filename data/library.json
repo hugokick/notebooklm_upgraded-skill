@@ -71,8 +71,60 @@
       "updated_at": "2026-03-12T00:14:25.949858",
       "use_count": 0,
       "last_used": null
+    },
+    "测试笔记本": {
+      "id": "测试笔记本",
+      "url": "https://notebooklm.google.com/notebook/test-chinese",
+      "name": "测试笔记本",
+      "description": "这是一个测试",
+      "topics": [
+        "测试"
+      ],
+      "content_types": [],
+      "use_cases": [],
+      "tags": [],
+      "created_at": "2026-03-12T08:42:55.473239",
+      "updated_at": "2026-03-12T08:42:55.473239",
+      "use_count": 0,
+      "last_used": null
+    },
+    "ai+课程质量认定标准": {
+      "id": "ai+课程质量认定标准",
+      "url": "https://notebooklm.google.com/notebook/4f627d7c-396c-4a5d-9ed4-264260cf19d0",
+      "name": "AI+课程质量认定标准",
+      "description": "关于AI课程质量的标准文档",
+      "topics": [
+        "AI",
+        "课程质量",
+        "教育"
+      ],
+      "content_types": [],
+      "use_cases": [],
+      "tags": [],
+      "created_at": "2026-03-12T08:44:11.146497",
+      "updated_at": "2026-03-12T08:44:11.146497",
+      "use_count": 0,
+      "last_used": null
+    },
+    "智能建造科创产业学院建设": {
+      "id": "智能建造科创产业学院建设",
+      "url": "https://notebooklm.google.com/notebook/9faa6396-3d2e-42e3-8d0f-0ee7403d06f2",
+      "name": "智能建造科创产业学院建设",
+      "description": "关于智能建造科创产业学院建设的文档库",
+      "topics": [
+        "智能建造",
+        "科创",
+        "产业学院"
+      ],
+      "content_types": [],
+      "use_cases": [],
+      "tags": [],
+      "created_at": "2026-03-12T09:01:27.070265",
+      "updated_at": "2026-03-12T09:01:27.070265",
+      "use_count": 0,
+      "last_used": null
     }
   },
   "active_notebook_id": "notebook-1-(bcf73e)",
-  "updated_at": "2026-03-12T00:14:25.949858"
+  "updated_at": "2026-03-12T09:01:27.070265"
 }

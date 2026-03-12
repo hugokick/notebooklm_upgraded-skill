@@ -27,17 +27,17 @@ from notebook_manager import NotebookLibrary
 from browser_utils import BrowserFactory
 
 
-def upload_source(notebook_url: str, file_path: str = None, youtube_url: str = None, headless: bool = False) -> bool:
-    """Add a new source (file or youtube link) to a notebook."""
+def upload_source(notebook_url: str, file_paths: list = None, youtube_url: str = None, headless: bool = False) -> bool:
+    """Add new sources (files or youtube link) to a notebook."""
     try:
         sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'replace')
     except:
         pass
 
-    if not file_path and not youtube_url:
+    if not file_paths and not youtube_url:
         print("Error: Must provide either --file or --youtube")
         return False
-    if file_path and youtube_url:
+    if file_paths and youtube_url:
         print("Error: Provide ONLY --file OR --youtube, not both")
         return False
 
@@ -46,15 +46,17 @@ def upload_source(notebook_url: str, file_path: str = None, youtube_url: str = N
         print("Not authenticated. Run: python auth_manager.py setup")
         return False
 
-    if file_path:
-        p = Path(file_path).expanduser().resolve()
-        if not p.exists():
-            print(f"Error: File does not exist: {p}")
-            return False
-        file_path = str(p)
+    resolved_files = []
+    if file_paths:
+        for fp in file_paths:
+            p = Path(fp).expanduser().resolve()
+            if not p.exists():
+                print(f"Error: File does not exist: {p}")
+                return False
+            resolved_files.append(str(p))
 
     print(f"Opening notebook: {notebook_url}")
-    print(f"Preparing to upload: {file_path if file_path else youtube_url}")
+    print(f"Preparing to upload: {resolved_files if resolved_files else youtube_url}")
 
     playwright = None
     context = None
@@ -64,192 +66,200 @@ def upload_source(notebook_url: str, file_path: str = None, youtube_url: str = N
         context = BrowserFactory.launch_persistent_context(playwright, headless=headless)
         page = context.new_page()
 
+        # Extract expected ID from URL for verification
+        notebook_id_match = re.search(r'/notebook/([a-zA-Z0-9-]+)', notebook_url)
+        expected_id = notebook_id_match.group(1) if notebook_id_match else None
+
         # --- Step 1: Navigate ---
         print("  Step 1: Navigating to notebook...")
-        try:
-            page.goto(notebook_url, wait_until="commit", timeout=30000)
-        except:
-            pass
-        time.sleep(10)
+        page.goto(notebook_url, wait_until="domcontentloaded", timeout=60000)
+        
+        # Verify we are on the correct page
+        if expected_id and expected_id not in page.url:
+             print(f"  Critical Error: Navigation failed or redirected. Expected ID {expected_id} not in current URL.")
+             # Try one more time with a longer wait if we are on dashboard
+             if "notebooklm.google.com" in page.url and "/notebook/" not in page.url:
+                 print("  Currently on dashboard. Re-attempting navigation...")
+                 page.goto(notebook_url, wait_until="networkidle", timeout=30000)
+                 if expected_id not in page.url:
+                      print("  Failing: Still not in target notebook.")
+                      return False
 
-        if "notebooklm.google.com" not in page.url:
-            print(f"  Error: Not on NotebookLM. URL: {page.url}")
-            return False
+        # Wait for the main UI to settle
+        try:
+            # Look for notebook-specific elements
+            page.wait_for_selector("button:has-text('Sources'), .source-list, [role='main']", timeout=20000)
+        except:
+            print("  Warning: Notebook UI elements not detected. Proceeding with caution.")
 
         # --- Step 2: Click Sources tab ---
-        print("  Step 2: Clicking Sources tab...")
+        print("  Step 2: Ensuring Sources tab is active...")
         try:
-            tab = page.get_by_text("Sources", exact=True)
-            if tab.count() > 0:
-                tab.first.click()
-                time.sleep(3)
-                print("  Clicked Sources tab")
-        except:
-            print("  Warning: Could not click Sources tab")
+            # Try a broader selector for the tab
+            sources_tab = page.locator("button, a, div").filter(has_text=re.compile(r"^Sources$", re.I)).first
+            if sources_tab.count() > 0:
+                print("  Clicking Sources tab...")
+                sources_tab.click()
+                # Wait for the sources list or "Add sources" button to become visible
+                page.wait_for_selector("button:has-text('Add sources'), .source-list", timeout=10000)
+                print("  Sources panel loaded.")
+            else:
+                print("  Warning: Sources tab not found. Trying to proceed anyway.")
+        except Exception as e:
+            print(f"  Warning: Sources tab navigation failed: {e}")
 
-        # --- Step 3: Click "+ Add sources" ---
-        print("  Step 3: Clicking Add sources...")
-        add_btn = None
-        for approach in [
-            lambda: page.get_by_text("Add sources", exact=False),
-            lambda: page.get_by_text("Upload a source", exact=False),
-            lambda: page.locator("button:has-text('Add sources')"),
-        ]:
+        # Function to handle a single upload action
+        def perform_upload(target_path=None, target_youtube=None):
+            # --- Step 3: Click "+ Add sources" ---
+            print("  Step 3: Clicking Add sources...")
+            
+            # Use very specific selectors that exclude the main header/sidebar
+            # We want the button INSIDE the sources panel
+            add_btn_selectors = [
+                 "button:has-text('Add sources'):visible",
+                 ".source-list-header button",
+                 "button:has-text('Upload a source')",
+            ]
+            
+            add_btn = None
+            for selector in add_btn_selectors:
+                try:
+                    candidates = page.locator(selector)
+                    count = candidates.count()
+                    for i in range(count):
+                        el = candidates.nth(i)
+                        text = (el.inner_text() or "").lower()
+                        # Critical: EXCLUDE "Create notebook"
+                        if "create" not in text and el.is_visible():
+                            add_btn = el
+                            break
+                    if add_btn: break
+                except:
+                    pass
+
+            if not add_btn:
+                # Last resort: look for a button with "Add" text that is NOT the create button
+                try:
+                    all_btns = page.query_selector_all("button:visible")
+                    for b in all_btns:
+                        text = (b.inner_text() or "").lower()
+                        if "add" in text and "create" not in text:
+                            # Verify it has an add icon or is in the right area
+                            add_btn = b
+                            break
+                except:
+                    pass
+
+            if not add_btn:
+                page.screenshot(path="upload_error_no_btn.png")
+                print("  Error: Could not find Add sources button (avoided Create notebook)")
+                return False
+
+            add_btn.click()
+            
+            # Wait for dialog
             try:
-                el = approach()
-                if el.count() > 0 and el.first.is_visible():
-                    add_btn = el.first
-                    break
+                # Dialog usually has specific headers like "Add sources"
+                page.wait_for_selector("[role='dialog'], mat-dialog-container", timeout=10000)
+                time.sleep(1) # Let animations finish
             except:
-                pass
+                print("  Warning: Dialog did not appear quickly")
 
-        if not add_btn:
-            page.screenshot(path="upload_debug.png")
-            print("  Error: Could not find Add sources button")
-            return False
+            # --- Step 4: Handle dialog ---
+            if target_youtube:
+                print(f"  Step 4: Pasting YouTube URL...")
+                search_input = page.locator("[role='dialog'] input, mat-dialog-container input").first
+                search_input.wait_for(state="visible", timeout=5000)
+                search_input.fill(target_youtube)
+                page.keyboard.press("Enter")
+                
+                try:
+                    page.wait_for_selector("button:has-text('Insert'), button:has-text('Add')", timeout=10000)
+                    page.locator("button:has-text('Insert'), button:has-text('Add')").first.click()
+                    print("  Clicked confirmation button")
+                except:
+                    pass
+            elif target_path:
+                filename = Path(target_path).name
+                print(f"  Step 4: Uploading file: {filename}")
+                
+                # Check for direct file input
+                try:
+                    file_input = page.locator("input[type='file']")
+                    if file_input.count() > 0:
+                        file_input.first.set_input_files(target_path)
+                        print("  File selected via direct input")
+                        # Wait for dialog to close
+                        page.wait_for_selector("[role='dialog']", state="hidden", timeout=15000)
+                        return True
+                except:
+                    pass
 
-        add_btn.click()
-        print("  Clicked Add sources")
-        time.sleep(3)
-
-        # --- Step 4: Handle dialog ---
-        # The dialog has:
-        # - A search bar "Search the web for new sources" (for URLs/YouTube)
-        # - A file drop zone "or drop your files" 
+                # Use specific button if available
+                upload_btn = page.locator("button:has-text('Upload files'), button:has-text('and more')").first
+                try:
+                    with page.expect_file_chooser(timeout=10000) as fc_info:
+                        upload_btn.click()
+                    fc_info.value.set_files(target_path)
+                    print("  File selected via chooser")
+                except:
+                    try:
+                        with page.expect_file_chooser(timeout=5000) as fc_info:
+                            page.locator("text='drop your files'").first.click()
+                        fc_info.value.set_files(target_path)
+                        print("  File selected via fallback chooser")
+                    except:
+                        print("  Error: Could not trigger file chooser")
+                        return False
+            
+            # Verification: Wait for dialog to close and file to appear or progress bar to show
+            try:
+                page.wait_for_selector("[role='dialog']", state="hidden", timeout=20000)
+            except:
+                print("  Warning: Dialog still open after upload")
+            
+            return True
 
         if youtube_url:
-            print(f"  Step 4: Pasting YouTube URL into search bar...")
-            
-            # Find the search input inside the dialog
-            search_input = None
-            for approach in [
-                lambda: page.locator("[role='dialog'] input[type='text']"),
-                lambda: page.locator("[role='dialog'] input"),
-                lambda: page.locator("mat-dialog-container input"),
-                lambda: page.get_by_placeholder("Search the web"),
-            ]:
-                try:
-                    el = approach()
-                    if el.count() > 0 and el.first.is_visible():
-                        search_input = el.first
-                        break
-                except:
-                    pass
-
-            if search_input:
-                search_input.click()
-                search_input.fill(youtube_url)
-                print("  Pasted YouTube URL")
-                time.sleep(1)
+            if not perform_upload(target_youtube=youtube_url):
+                return False
+        else:
+            for fp in resolved_files:
+                filename = Path(fp).name
+                if not perform_upload(target_path=fp):
+                    print(f"  Failed to initiate upload: {fp}")
+                    continue
                 
-                # Click the submit/arrow button
-                submit = None
+                # Verify processing for this specific file
+                print(f"  Verifying upload of {filename}...")
                 try:
-                    # The arrow button inside the dialog
-                    arrow = page.locator("[role='dialog'] button[aria-label*='Search']")
-                    if arrow.count() > 0:
-                        submit = arrow.first
-                    else:
-                        # Try finding the arrow/submit button near the input
-                        arrow = page.locator("[role='dialog'] button.submit-button, [role='dialog'] button mat-icon:has-text('arrow')")
-                        if arrow.count() > 0:
-                            submit = arrow.first
+                    # Look for the filename in the sources panel
+                    # Use a locator that finds the text and wait for it to be present
+                    page.wait_for_selector(f"text='{filename}'", timeout=45000)
+                    print(f"  Confirmed: {filename} is visible in source list")
                 except:
-                    pass
+                    print(f"  Warning: {filename} not yet visible in source list (might be slow processing)")
+                
+                time.sleep(1) # Small gap between files
 
-                if submit:
-                    submit.click()
-                    print("  Clicked search submit")
-                else:
-                    print("  Pressing Enter to submit")
-                    page.keyboard.press("Enter")
-            else:
-                print("  Warning: Could not find search input, trying keyboard")
-                page.keyboard.press("Tab")
-                time.sleep(0.5)
-                page.keyboard.type(youtube_url, delay=20)
-                time.sleep(0.5)
-                page.keyboard.press("Enter")
-
-            time.sleep(5)
-
-            # After pasting a YouTube URL, NotebookLM may show a confirmation
-            # Look for an "Insert" or "Add" button
-            try:
-                for txt in ['Insert', 'Add', 'import']:
-                    btn = page.locator(f"[role='dialog'] button:has-text('{txt}')")
-                    if btn.count() > 0:
-                        for i in range(btn.count()):
-                            if btn.nth(i).is_visible() and btn.nth(i).is_enabled():
-                                btn.nth(i).click()
-                                print(f"  Clicked {txt} button")
-                                break
-                        break
-            except:
-                pass
-
-        elif file_path:
-            print(f"  Step 4: Uploading file: {Path(file_path).name}")
-
-            # Look for hidden file input 
-            file_input = page.locator("input[type='file']")
-            if file_input.count() > 0:
-                file_input.first.set_input_files(file_path)
-                print("  File selected via input element")
-            else:
-                # Click on the drop zone to trigger file picker
-                drop_zone = None
-                try:
-                    drop_zone = page.locator("[role='dialog'] .drop-zone, [role='dialog'] button.drop-zone")
-                    if drop_zone.count() == 0:
-                        drop_zone = page.get_by_text("drop your files", exact=False)
-                except:
-                    pass
-
-                if drop_zone and drop_zone.count() > 0:
-                    # Use file chooser handler
-                    with page.expect_file_chooser() as fc_info:
-                        drop_zone.first.click()
-                    file_chooser = fc_info.value
-                    file_chooser.set_files(file_path)
-                    print("  File selected via file chooser")
-                else:
-                    print("  Error: Could not find file upload mechanism")
-                    page.screenshot(path="upload_debug.png")
-                    return False
-
-        # --- Step 5: Wait for processing ---
-        print("  Step 5: Waiting for source to be processed...")
-        time.sleep(15)
-
-        page.screenshot(path="upload_result.png")
-        print("  Result screenshot saved")
-        print("  Upload completed!")
+        page.screenshot(path="upload_final_check.png")
+        print("  Final screenshot saved")
+        print("  Upload sequence completed!")
         return True
 
     except Exception as e:
         print(f"  Error: {e}")
-        import traceback
-        traceback.print_exc()
         return False
     finally:
-        if context:
-            try:
-                context.close()
-            except:
-                pass
-        if playwright:
-            try:
-                playwright.stop()
-            except:
-                pass
+        if context: context.close()
+        if playwright: playwright.stop()
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Add a source to NotebookLM')
+    parser = argparse.ArgumentParser(description='Add source(s) to NotebookLM')
     parser.add_argument('--notebook-url', help='NotebookLM notebook URL')
     parser.add_argument('--notebook-id', help='Notebook ID from library')
-    parser.add_argument('--file', help='Path to local file (PDF, TXT, MD, audio, etc.)')
+    parser.add_argument('--file', action='append', help='Path to local file (can be repeated for batch)')
     parser.add_argument('--youtube', help='YouTube link to add as source')
     parser.add_argument('--show-browser', action='store_true', help='Show browser')
 
@@ -277,7 +287,7 @@ def main():
 
     success = upload_source(
         notebook_url=notebook_url,
-        file_path=args.file,
+        file_paths=args.file,
         youtube_url=args.youtube,
         headless=not args.show_browser
     )

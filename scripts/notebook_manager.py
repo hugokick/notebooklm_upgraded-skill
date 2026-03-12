@@ -9,6 +9,7 @@ import json
 import argparse
 import uuid
 import os
+import re
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 from datetime import datetime
@@ -35,7 +36,7 @@ class NotebookLibrary:
         """Load library from disk"""
         if self.library_file.exists():
             try:
-                with open(self.library_file, 'r') as f:
+                with open(self.library_file, 'r', encoding='utf-8') as f:
                     data = json.load(f)
                     self.notebooks = data.get('notebooks', {})
                     self.active_notebook_id = data.get('active_notebook_id')
@@ -55,8 +56,8 @@ class NotebookLibrary:
                 'active_notebook_id': self.active_notebook_id,
                 'updated_at': datetime.now().isoformat()
             }
-            with open(self.library_file, 'w') as f:
-                json.dump(data, f, indent=2)
+            with open(self.library_file, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
         except Exception as e:
             print(f"❌ Error saving library: {e}")
 
@@ -85,8 +86,11 @@ class NotebookLibrary:
         Returns:
             The created notebook object
         """
-        # Generate ID from name
-        notebook_id = name.lower().replace(' ', '-').replace('_', '-')
+        # Generate ID from name - handle non-ASCII characters by hashing if needed or just slugifying
+        # Keep name as is but remove problematic chars for ID
+        notebook_id = name.lower()
+        notebook_id = re.sub(r'[\s_]+', '-', notebook_id)
+        notebook_id = re.sub(r'[^\w\-]', '', notebook_id) if not any(ord(c) > 127 for c in notebook_id) else notebook_id
 
         # Check for duplicates
         if notebook_id in self.notebooks:
