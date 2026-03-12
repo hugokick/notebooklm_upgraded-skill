@@ -144,7 +144,7 @@ python scripts/run.py upload_source.py --youtube "https://www.youtube.com/watch?
 # Upload a YouTube link to a specific notebook
 python scripts/run.py upload_source.py --youtube "https://www.youtube.com/watch?v=VIDEO_ID" --notebook-id ID
 
-# Upload local file(s) - BATCH SUPPORTED (V1.5.0)
+# Upload local file(s) - BATCH SUPPORTED (V1.5.2)
 python scripts/run.py upload_source.py --file "C:\path\to\doc1.pdf" --file "C:\path\to\doc2.pptx"
 
 # Upload with visible browser for debugging

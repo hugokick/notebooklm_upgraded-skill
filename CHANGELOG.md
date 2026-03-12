@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.2] - 2026-03-12
+
+### Added
+- **Robust Research Queries** - Increased timeouts and added error handling for deep-dive queries in complex notebooks.
+
+### Fixed
+- **Headless Mode Documentation** - Explicitly noted background operation as the default efficiency mode.
+
+## [1.5.1] - 2026-03-12
+
+### Added
+- **Streamlined Notebook Creation** - New `create_notebook.py` for direct, high-speed creation and naming.
+- **Self-Healing UI** - Internal logic to automatically detect and dismiss onboarding overlays blocking automation.
+
+## [1.5.0] - 2026-03-12
+
+### Added
+- **V1.5.0 Milestone** - Major efficiency overhaul and batch processing stability.
+
 ## [1.4.0] - 2026-03-12
 
 ### Added
