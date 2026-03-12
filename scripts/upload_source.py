@@ -110,6 +110,22 @@ def upload_source(notebook_url: str, file_paths: list = None, youtube_url: str =
 
         # Function to handle a single upload action
         def perform_upload(target_path=None, target_youtube=None):
+            # --- Dismiss any potential overlays (Getting Started, etc.) ---
+            try:
+                dismiss_selectors = [
+                    "button:has-text('Got it')",
+                    "button:has-text('Dismiss')",
+                    "button:has-text('Close')",
+                    "[aria-label='Close dialog']"
+                ]
+                for selector in dismiss_selectors:
+                    if page.locator(selector).is_visible():
+                        print(f"  Dismissing overlay: {selector}")
+                        page.locator(selector).click()
+                        time.sleep(1)
+            except:
+                pass
+
             # --- Step 3: Click "+ Add sources" ---
             print("  Step 3: Clicking Add sources...")
             
