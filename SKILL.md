@@ -15,6 +15,10 @@ Trigger when user:
 - Asks to query their notebooks/documentation
 - Wants to add documentation to NotebookLM library
 - Uses phrases like "ask my NotebookLM", "check my docs", "query my notebook"
+ 
+ ## Background Operation (Efficiency First)
+ 
+ By default, all scripts run in **headless mode** (in the background). You will not see a browser window unless you explicitly add the `--show-browser` flag. This ensures maximum efficiency and zero interruption to your work.
 
 ## ⚠️ CRITICAL: Add Command - Smart Discovery
 
