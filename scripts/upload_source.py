@@ -194,29 +194,37 @@ def upload_source(notebook_url: str, file_paths: list = None, youtube_url: str =
                         return True
                 except:
                     pass
-
                 # Use specific button if available
                 upload_btn = page.locator("button:has-text('Upload files'), button:has-text('and more')").first
                 try:
-                    with page.expect_file_chooser(timeout=10000) as fc_info:
-                        upload_btn.click()
+                    print("  Attempting to trigger file chooser via 'Upload files' button...")
+                    with page.expect_file_chooser(timeout=15000) as fc_info:
+                        upload_btn.click(force=True)
                     fc_info.value.set_files(target_path)
                     print("  File selected via chooser")
                 except:
                     try:
-                        with page.expect_file_chooser(timeout=5000) as fc_info:
-                            page.locator("text='drop your files'").first.click()
+                        print("  Attempting fallback via 'drop your files' text...")
+                        with page.expect_file_chooser(timeout=10000) as fc_info:
+                            page.locator("text='drop your files'").first.click(force=True)
                         fc_info.value.set_files(target_path)
                         print("  File selected via fallback chooser")
                     except:
-                        print("  Error: Could not trigger file chooser")
-                        return False
-            
+                        print("  Error: Could not trigger file chooser. Trying direct input set as final fallback...")
+                        try:
+                            page.locator("input[type='file']").first.set_input_files(target_path)
+                            print("  File set via direct input fallback")
+                        except Exception as e2:
+                            print(f"  Final fallback failed: {e2}")
+                            return False
+
             # Verification: Wait for dialog to close and file to appear or progress bar to show
             try:
-                page.wait_for_selector("[role='dialog']", state="hidden", timeout=20000)
+                # Wait longer for the processing of large files (like 15MB PDFs)
+                print("  Waiting for upload dialog to close...")
+                page.wait_for_selector("[role='dialog']", state="hidden", timeout=30000)
             except:
-                print("  Warning: Dialog still open after upload")
+                print("  Warning: Dialog still open, but check for processing...")
             
             return True
 
@@ -231,16 +239,36 @@ def upload_source(notebook_url: str, file_paths: list = None, youtube_url: str =
                     continue
                 
                 # Verify processing for this specific file
-                print(f"  Verifying upload of {filename}...")
+                print(f"  Verifying upload of {filename} (waiting for indexing to complete)...")
                 try:
-                    # Look for the filename in the sources panel
-                    # Use a locator that finds the text and wait for it to be present
-                    page.wait_for_selector(f"text='{filename}'", timeout=45000)
-                    print(f"  Confirmed: {filename} is visible in source list")
-                except:
-                    print(f"  Warning: {filename} not yet visible in source list (might be slow processing)")
+                    # 1. Wait for the filename to appear
+                    page.wait_for_selector(f"text='{filename}'", timeout=90000)
+                    print(f"  {filename} is visible in the list")
+                    
+                    # 2. Wait for the 'Syncing' spinner to disappear
+                    # In NotebookLM, syncing indicates server-side processing.
+                    # We wait until the selector that matches the syncing icon is gone for this specific row.
+                    # Or just wait globally for no syncing indicators in the main panel.
+                    sync_selector = "[aria-label='Source is syncing']"
+                    print("  Waiting for 'Syncing' spinners to clear (this is critical for recognition)...")
+                    try:
+                        # Wait for at least one to be hidden or non-existent
+                        page.wait_for_selector(sync_selector, state="hidden", timeout=180000)
+                        print("  Syncing indicators cleared!")
+                    except:
+                        print("  Warning: Syncing is taking longer than 180s. Continuing anyway...")
+                    
+                    # 3. Final verification: Check for the checkbox (indicates 'Ready')
+                    ready_indicator = page.locator("div[role='checkbox']").last
+                    if ready_indicator.is_visible():
+                         print(f"  {filename} appears Ready (Checkbox visible)")
+                    
+                    time.sleep(5) # Final safety buffer
+                    
+                except Exception as e:
+                    print(f"  Verification warning for {filename}: {e}")
                 
-                time.sleep(1) # Small gap between files
+                time.sleep(2) # Gap between files
 
         page.screenshot(path="upload_final_check.png")
         print("  Final screenshot saved")

@@ -1,111 +1,5 @@
 {
   "notebooks": {
-    "notebook-1-(bcf73e)": {
-      "id": "notebook-1-(bcf73e)",
-      "url": "https://notebooklm.google.com/notebook/bcf73eee-8d13-4c2f-a894-12b8e21989c4",
-      "name": "Notebook 1 (bcf73e)",
-      "description": "Notebook content retrieved successfully",
-      "topics": [
-        "ai",
-        "research",
-        "documents"
-      ],
-      "content_types": [],
-      "use_cases": [],
-      "tags": [],
-      "created_at": "2026-03-12T00:11:00.075282",
-      "updated_at": "2026-03-12T00:11:00.075282",
-      "use_count": 0,
-      "last_used": null
-    },
-    "notebook-2-(ac1f7d)": {
-      "id": "notebook-2-(ac1f7d)",
-      "url": "https://notebooklm.google.com/notebook/ac1f7d7a-9b91-4e1b-855c-c3693dab2e11",
-      "name": "Notebook 2 (ac1f7d)",
-      "description": "Notebook content retrieved successfully",
-      "topics": [
-        "ai",
-        "research",
-        "documents"
-      ],
-      "content_types": [],
-      "use_cases": [],
-      "tags": [],
-      "created_at": "2026-03-12T00:12:14.788972",
-      "updated_at": "2026-03-12T00:12:14.788972",
-      "use_count": 0,
-      "last_used": null
-    },
-    "notebook-3-(4f627d)": {
-      "id": "notebook-3-(4f627d)",
-      "url": "https://notebooklm.google.com/notebook/4f627d7c-396c-4a5d-9ed4-264260cf19d0",
-      "name": "Notebook 3 (4f627d)",
-      "description": "Notebook content retrieved successfully",
-      "topics": [
-        "ai",
-        "research",
-        "documents"
-      ],
-      "content_types": [],
-      "use_cases": [],
-      "tags": [],
-      "created_at": "2026-03-12T00:13:25.944169",
-      "updated_at": "2026-03-12T00:13:25.944169",
-      "use_count": 0,
-      "last_used": null
-    },
-    "notebook-4-(b88d32)": {
-      "id": "notebook-4-(b88d32)",
-      "url": "https://notebooklm.google.com/notebook/b88d32e1-cdba-455c-a791-dee90052e8ae",
-      "name": "Notebook 4 (b88d32)",
-      "description": "Notebook content retrieved successfully",
-      "topics": [
-        "ai",
-        "research",
-        "documents"
-      ],
-      "content_types": [],
-      "use_cases": [],
-      "tags": [],
-      "created_at": "2026-03-12T00:14:25.949858",
-      "updated_at": "2026-03-12T00:14:25.949858",
-      "use_count": 0,
-      "last_used": null
-    },
-    "测试笔记本": {
-      "id": "测试笔记本",
-      "url": "https://notebooklm.google.com/notebook/test-chinese",
-      "name": "测试笔记本",
-      "description": "这是一个测试",
-      "topics": [
-        "测试"
-      ],
-      "content_types": [],
-      "use_cases": [],
-      "tags": [],
-      "created_at": "2026-03-12T08:42:55.473239",
-      "updated_at": "2026-03-12T08:42:55.473239",
-      "use_count": 0,
-      "last_used": null
-    },
-    "ai+课程质量认定标准": {
-      "id": "ai+课程质量认定标准",
-      "url": "https://notebooklm.google.com/notebook/4f627d7c-396c-4a5d-9ed4-264260cf19d0",
-      "name": "AI+课程质量认定标准",
-      "description": "关于AI课程质量的标准文档",
-      "topics": [
-        "AI",
-        "课程质量",
-        "教育"
-      ],
-      "content_types": [],
-      "use_cases": [],
-      "tags": [],
-      "created_at": "2026-03-12T08:44:11.146497",
-      "updated_at": "2026-03-12T08:44:11.146497",
-      "use_count": 0,
-      "last_used": null
-    },
     "智能建造科创产业学院建设": {
       "id": "智能建造科创产业学院建设",
       "url": "https://notebooklm.google.com/notebook/9faa6396-3d2e-42e3-8d0f-0ee7403d06f2",
@@ -123,8 +17,154 @@
       "updated_at": "2026-03-12T09:01:27.070265",
       "use_count": 0,
       "last_used": null
+    },
+    "智能机械与机器人基础考试": {
+      "id": "智能机械与机器人基础考试",
+      "url": "https://notebooklm.google.com/notebook/bcf73eee-8d13-4c2f-a894-12b8e21989c4",
+      "name": "智能机械与机器人基础考试",
+      "description": "包含智能机械与机器人相关的考试资料",
+      "topics": [
+        "智能机械",
+        "机器人",
+        "考试"
+      ],
+      "content_types": [],
+      "use_cases": [],
+      "tags": [],
+      "created_at": "2026-03-12T09:43:59.140235",
+      "updated_at": "2026-03-12T09:43:59.140235",
+      "use_count": 0,
+      "last_used": null
+    },
+    "fbd7588a-f28d-4280-af12-b73a6aab48de": {
+      "id": "fbd7588a-f28d-4280-af12-b73a6aab48de",
+      "url": "https://notebooklm.google.com/notebook/fbd7588a-f28d-4280-af12-b73a6aab48de",
+      "name": "机器人行走机构原理与应用",
+      "description": "Automatically discovered from dashboard",
+      "topics": [
+        "discovered"
+      ],
+      "content_types": [],
+      "use_cases": [],
+      "tags": [],
+      "created_at": "2026-03-12T10:04:53.918740",
+      "updated_at": "2026-03-12T12:01:08.219979",
+      "use_count": 0,
+      "last_used": null
+    },
+    "1c54f6e1-2e8c-46b5-94b3-4edc9e4b01d9": {
+      "id": "1c54f6e1-2e8c-46b5-94b3-4edc9e4b01d9",
+      "url": "https://notebooklm.google.com/notebook/1c54f6e1-2e8c-46b5-94b3-4edc9e4b01d9",
+      "name": "智能机械与机器人基础考试",
+      "description": "Automatically discovered from dashboard",
+      "topics": [
+        "discovered"
+      ],
+      "content_types": [],
+      "use_cases": [],
+      "tags": [],
+      "created_at": "2026-03-12T10:04:53.920216",
+      "updated_at": "2026-03-12T12:01:08.220982",
+      "use_count": 0,
+      "last_used": null
+    },
+    "3339d6d6-cf3a-45f0-a51c-2013105afd2d": {
+      "id": "3339d6d6-cf3a-45f0-a51c-2013105afd2d",
+      "url": "https://notebooklm.google.com/notebook/3339d6d6-cf3a-45f0-a51c-2013105afd2d",
+      "name": "测试笔记本",
+      "description": "Automatically discovered from dashboard",
+      "topics": [
+        "discovered"
+      ],
+      "content_types": [],
+      "use_cases": [],
+      "tags": [],
+      "created_at": "2026-03-12T10:04:53.920216",
+      "updated_at": "2026-03-12T12:01:08.220982",
+      "use_count": 0,
+      "last_used": null
+    },
+    "9faa6396-3d2e-42e3-8d0f-0ee7403d06f2": {
+      "id": "9faa6396-3d2e-42e3-8d0f-0ee7403d06f2",
+      "url": "https://notebooklm.google.com/notebook/9faa6396-3d2e-42e3-8d0f-0ee7403d06f2",
+      "name": "智能建造科创产业学院建设",
+      "description": "Automatically discovered from dashboard",
+      "topics": [
+        "discovered"
+      ],
+      "content_types": [],
+      "use_cases": [],
+      "tags": [],
+      "created_at": "2026-03-12T10:04:53.920972",
+      "updated_at": "2026-03-12T12:01:08.220982",
+      "use_count": 0,
+      "last_used": null
+    },
+    "4f627d7c-396c-4a5d-9ed4-264260cf19d0": {
+      "id": "4f627d7c-396c-4a5d-9ed4-264260cf19d0",
+      "url": "https://notebooklm.google.com/notebook/4f627d7c-396c-4a5d-9ed4-264260cf19d0",
+      "name": "深度学习/机器学习在土木工程应用实践",
+      "description": "Automatically discovered from dashboard",
+      "topics": [
+        "discovered"
+      ],
+      "content_types": [],
+      "use_cases": [],
+      "tags": [],
+      "created_at": "2026-03-12T10:04:53.920972",
+      "updated_at": "2026-03-12T12:01:08.222058",
+      "use_count": 0,
+      "last_used": null
+    },
+    "bcf73eee-8d13-4c2f-a894-12b8e21989c4": {
+      "id": "bcf73eee-8d13-4c2f-a894-12b8e21989c4",
+      "url": "https://notebooklm.google.com/notebook/bcf73eee-8d13-4c2f-a894-12b8e21989c4",
+      "name": "自动控制基础",
+      "description": "Automatically discovered from dashboard",
+      "topics": [
+        "discovered"
+      ],
+      "content_types": [],
+      "use_cases": [],
+      "tags": [],
+      "created_at": "2026-03-12T10:04:53.921475",
+      "updated_at": "2026-03-12T12:01:08.222058",
+      "use_count": 0,
+      "last_used": null
+    },
+    "ac1f7d7a-9b91-4e1b-855c-c3693dab2e11": {
+      "id": "ac1f7d7a-9b91-4e1b-855c-c3693dab2e11",
+      "url": "https://notebooklm.google.com/notebook/ac1f7d7a-9b91-4e1b-855c-c3693dab2e11",
+      "name": "智慧工地",
+      "description": "Automatically discovered from dashboard",
+      "topics": [
+        "discovered"
+      ],
+      "content_types": [],
+      "use_cases": [],
+      "tags": [],
+      "created_at": "2026-03-12T10:04:53.921475",
+      "updated_at": "2026-03-12T12:01:08.223061",
+      "use_count": 0,
+      "last_used": null
+    },
+    "b88d32e1-cdba-455c-a791-dee90052e8ae": {
+      "id": "b88d32e1-cdba-455c-a791-dee90052e8ae",
+      "url": "https://notebooklm.google.com/notebook/b88d32e1-cdba-455c-a791-dee90052e8ae",
+      "name": "机器人基础实训",
+      "description": "Automatically discovered from dashboard",
+      "topics": [
+        "discovered"
+      ],
+      "content_types": [],
+      "use_cases": [],
+      "tags": [],
+      "created_at": "2026-03-12T10:04:53.921475",
+      "updated_at": "2026-03-12T12:01:08.223565",
+      "use_count": 0,
+      "last_used": null
     }
   },
-  "active_notebook_id": "notebook-1-(bcf73e)",
-  "updated_at": "2026-03-12T09:01:27.070265"
+  "active_notebook_id": "智能机械与机器人基础考试",
+  "updated_at": "2026-03-12T12:01:08.223565"
 }

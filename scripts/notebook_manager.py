@@ -124,6 +124,63 @@ class NotebookLibrary:
         print(f"✅ Added notebook: {name} ({notebook_id})")
         return notebook
 
+    def sync_entry(
+        self,
+        url: str,
+        name: str,
+        notebook_id: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Synchronize a notebook entry (add if missing, update if exists)
+        
+        Args:
+            url: Notebook URL
+            name: Notebook name
+            notebook_id: Optional specific ID (if None, generated from name)
+            
+        Returns:
+            The notebook record
+        """
+        if notebook_id is None:
+            # Generate ID from name
+            notebook_id = name.lower()
+            notebook_id = re.sub(r'[\s_]+', '-', notebook_id)
+            if not any(ord(c) > 127 for c in notebook_id):
+                notebook_id = re.sub(r'[^\w\-]', '', notebook_id)
+
+        if notebook_id in self.notebooks:
+            # Update existing
+            notebook = self.notebooks[notebook_id]
+            notebook['url'] = url
+            notebook['name'] = name
+            notebook['updated_at'] = datetime.now().isoformat()
+            print(f"🔄 Updated notebook: {name} ({notebook_id})")
+        else:
+            # Add new
+            notebook = {
+                'id': notebook_id,
+                'url': url,
+                'name': name,
+                'description': "Automatically discovered from dashboard",
+                'topics': ["discovered"],
+                'content_types': [],
+                'use_cases': [],
+                'tags': [],
+                'created_at': datetime.now().isoformat(),
+                'updated_at': datetime.now().isoformat(),
+                'use_count': 0,
+                'last_used': None
+            }
+            self.notebooks[notebook_id] = notebook
+            print(f"✨ Discovered new notebook: {name} ({notebook_id})")
+
+        # Ensure we have an active notebook
+        if not self.active_notebook_id:
+            self.active_notebook_id = notebook_id
+
+        self._save_library()
+        return notebook
+
     def remove_notebook(self, notebook_id: str) -> bool:
         """
         Remove a notebook from the library

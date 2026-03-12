@@ -10,8 +10,13 @@ data/auth_info.json
 # Debug/temp files
 *.png
 *.html
+*.txt
 elements.txt
 auto_add_log.txt
+scripts/debug_*.py
+scripts/diagnose_*.py
+scripts/get_summary.py
+verify_upload_v2.py
 
 # OS
 .DS_Store
